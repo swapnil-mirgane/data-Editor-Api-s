@@ -3,10 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { GetDataModule } from './get_data/get_data.module';
-
+import { sample_data } from './entities/sample.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 @Module({
-  imports: [GetDataModule , ConfigModule.forRoot({ isGlobal: true }),
+  imports: [TypeOrmModule.forFeature([sample_data]), ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST,
@@ -16,9 +17,12 @@ import { GetDataModule } from './get_data/get_data.module';
       database: process.env.POSTGRES_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
-      logging:true
+      // logging:true
+    }), ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
     }),],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService],  
+
 })
 export class AppModule {}
