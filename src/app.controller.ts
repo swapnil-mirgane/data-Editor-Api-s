@@ -8,11 +8,11 @@ export class AppController {
   @Get()
   getHello(): string {
     return this.appService.getHello();
-  }
+  } 
   
-  @Get('api/v1/image/detail')
-  findOne(@Query('id') id: string) {
-    return this.appService.findOne(+id);
+  @Get('api/v1/image/detail/:id')
+  findOne(@Param('id') id: string) {
+    return this.appService.getImageUrl(+id);
   }
 
   @Get('allData')
