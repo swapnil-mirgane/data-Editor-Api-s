@@ -2,6 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { sample_data } from './entities/sample.entity';
+import * as AWS from 'aws-sdk';
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  signatureVersion: 'v4',
+  region: 'ap-south-1',
+  secretAccessKey:process.env.AWS_SECRET_ACCESS_KEY
+});
 
 @Injectable()
 export class AppService {
@@ -13,22 +20,22 @@ export class AppService {
     return 'Hello World!';
   }
 
-  // find by id
-  async findOne(id: number) {
-    let data: any = await this.sample_dataRepository.findOneBy({ id });
-    let baseUrl = process.env.baseUrl;
-
-    if (!data) {
-      return {
-        msg: `No Data Found `,
-      };
+  // get image URL from s3  
+  async getImageUrl(id: number) {
+    let data:any = await this.sample_dataRepository.findOneBy({id});  
+    let baseUrl=process.env.baseUrl
+    if(!data){
+      return{
+        msg:`No Data Found `
+      }
     }
-    let url = ` ${baseUrl}/storage/${data.fname}`;
+    const url = s3.getSignedUrl('getObject', { Bucket:process.env.AWS_S3_BUCKET_NAME, Key:`Nilesh_B/2022-09-23/114GOPRO/G0095996.JPG` })
     return {
       data: { url },
     };
   }
 
+  
   async find(BBox) {
     let data1: any = await this.sample_dataRepository
       .query(`SELECT * FROM sample_data WHERE ST_Contains(
