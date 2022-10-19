@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {  Controller, Get,  Query,Param } from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -15,6 +15,7 @@ export class AppController {
     return this.appService.getImageUrl(+id);
   }
 
+
   @Get('allData')
   async findAll(@Query() query: { bbox: any }): Promise<any> {
     let BBox = `${query.bbox}`;
@@ -24,7 +25,7 @@ export class AppController {
     } else {
       return {
         message: 'No Data Found',
-        data: []
+        data: [],
       };
     }
   }
